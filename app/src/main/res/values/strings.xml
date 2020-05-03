@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Financial Calculator</string>
+    <string name="fragment_deposit_title">Deposit</string>
+    <string name="fragment_credit_title">Credit</string>
+    <string name="credit_amount">Credit Amount</string>
+    <string name="term_months">Term (months)</string>
+    <string name="advance">Advance %</string>
+    <string name="rate">Rate %</string>
+    <string name="insurance">Insurance %</string>
+    <string name="commission">Commission %</string>
+    <string name="monthly_income">Monthly income:</string>
+    <string name="total_revenue_after_n_months">Total revenue after N months:</string>
+    <string name="total_replenishment_amount">Total replenishment amount:</string>
+    <string name="total_amount_deposit">Total amount (% + deposit):</string>
+    <string name="an_initial_fee">An initial fee:</string>
+    <string name="loan_overpayment">Loan overpayment:</string>
+    <string name="monthly_payment">Monthly payment:</string>
+    <string name="total_repayment_amount">Total repayment amount:</string>
+    <string name="deposit_amount">Deposit Amount</string>
+    <string name="replenishment">Replenishment</string>
+    <string name="capitalization">Capitalization</string>
+    <string name="tax">Tax %</string>
+</resources>
