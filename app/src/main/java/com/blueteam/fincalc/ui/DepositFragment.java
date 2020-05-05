@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -15,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.blueteam.fincalc.R;
-import com.blueteam.fincalc.data.model.Credit;
 import com.blueteam.fincalc.data.model.Deposit;
 
 public class DepositFragment extends Fragment implements TitleOwner {
@@ -32,12 +32,22 @@ public class DepositFragment extends Fragment implements TitleOwner {
     private TextView depositTotalRepTextView;
     private TextView depositTotalAmountTextView;
 
+    private boolean isCapitalizationEnabled;
+
+    private double depositAmount;
+
+    private int depositTerm;
+    private double depositRate;
+    private double depositReplenishment;
+    private double depositTax;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_deposit, container, false);
 
         depositAmountEditText = fragmentView.findViewById(R.id.depositAmountEditText);
+
         depositTermEditText = fragmentView.findViewById(R.id.depositTermEditText);
         depositReplenishmentEditText = fragmentView.findViewById(R.id.depositReplenishmentEditText);
         depositRateEditText = fragmentView.findViewById(R.id.depositRateEditText);
@@ -56,6 +66,22 @@ public class DepositFragment extends Fragment implements TitleOwner {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        depositCapitalizationCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    isCapitalizationEnabled = true;
+                    createDeposit();
+
+                } else {
+                    isCapitalizationEnabled = false;
+                    createDeposit();
+                }
+            }
+        });
+
+
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -70,10 +96,48 @@ public class DepositFragment extends Fragment implements TitleOwner {
             @Override
             public void afterTextChanged(Editable s) {
 
-                Deposit deposit = new Deposit();
 
+                if (!depositAmountEditText.getText().toString().matches("")) {
+                    depositAmount = Double.parseDouble(depositAmountEditText.getText().toString());
+                } else depositAmount = 0;
+
+                if (!depositTermEditText.getText().toString().matches("")) {
+                    depositTerm = Integer.parseInt(depositTermEditText.getText().toString());
+                } else depositTerm = 0;
+
+
+                if (!depositReplenishmentEditText.getText().toString().matches("")) {
+                    depositReplenishment = Double.parseDouble(depositReplenishmentEditText.getText().toString());
+                } else depositReplenishment = 0;
+
+
+                if (!depositRateEditText.getText().toString().matches("")) {
+                    depositRate = Double.parseDouble(depositRateEditText.getText().toString()) / 100;
+                } else depositRate = 0;
+
+
+                if (!depositTaxEditText.getText().toString().matches("")) {
+                    depositTax = Double.parseDouble(depositTaxEditText.getText().toString()) / 100;
+                } else depositTax = 0;
+
+                createDeposit();
             }
         };
+
+        depositAmountEditText.addTextChangedListener(afterTextChangedListener);
+        depositTermEditText.addTextChangedListener(afterTextChangedListener);
+        depositReplenishmentEditText.addTextChangedListener(afterTextChangedListener);
+        depositRateEditText.addTextChangedListener(afterTextChangedListener);
+        depositTaxEditText.addTextChangedListener(afterTextChangedListener);
+    }
+
+
+    private void createDeposit() {
+        Deposit deposit = new Deposit(depositAmount, depositTerm, depositReplenishment, depositRate, isCapitalizationEnabled, depositTax);
+        depositMonthlyIncomeTextView.setText(String.format("%s %.2f", getString(R.string.monthly_income), deposit.getMonthlyIncome()));
+        depositTotalRevTextView.setText(String.format("%s %.2f", getString(R.string.total_revenue_after_n_months), deposit.getTotalRev()));
+        depositTotalRepTextView.setText(String.format("%s %.2f", getString(R.string.total_replenishment_amount), deposit.getDepositRepAmount()));
+        depositTotalAmountTextView.setText(String.format("%s %.2f", getString(R.string.total_amount_deposit), deposit.getTotalAmount()));
     }
 
     @Override
